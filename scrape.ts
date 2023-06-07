@@ -1,12 +1,12 @@
 import { chromium, Browser, Page, Locator, ElementHandle } from 'playwright';
 
-async function scrapeData(searchItem): Promise<void> {
+async function scrapeData(searchItem, URL): Promise<void> {
     const browser: Browser = await chromium.launch({
       headless: false // setting this to true will not run the UI
   });
     const page: Page = await browser.newPage();
 
-    await page.goto('https://amazon.com');
+    await page.goto(URL);
     await page.waitForTimeout(1000); // wait for 5 seconds
 
     // Extract data from the webpage
@@ -43,7 +43,10 @@ async function scrapeData(searchItem): Promise<void> {
         const linkLocator: Locator = page.locator(linkXPath);
         const product: string = await productLocator.innerText();
         const price: string = await priceLocator.innerText();
-        const link: string = await linkLocator.getAttribute('href') || '';
+        let link: string = await linkLocator.getAttribute('href') || '';
+        if(link.startsWith('/')){
+          link = `${URL}${link}`
+        }
         console.log(product+" "+price+" "+link);
   
         let productItem = {
@@ -90,6 +93,6 @@ async function scrapeData(searchItem): Promise<void> {
   await browser.close();
 }
 
-scrapeData('nike shoes').catch((err) => console.error(err));
+scrapeData('nike shoes', 'https://amazon.com').catch((err) => console.error(err));
 
   
