@@ -24,11 +24,14 @@ async function scrapeData(): Promise<void> {
       console.log(i);
       let productXPath = '(//*[@data-component-type="s-search-result"]//*[@class="a-section a-spacing-small puis-padding-left-small puis-padding-right-small"]//*[@class="a-size-base-plus a-color-base a-text-normal"])['+i+']';
       let priceXPath = '(//*[@data-component-type="s-search-result"]//*[@class="a-section a-spacing-none a-spacing-top-small s-price-instructions-style"]//*[@class="a-offscreen"])['+i+']';
+      let linkXPath = '(//*[@data-component-type="s-search-result"]//*[@class="a-section a-spacing-small puis-padding-left-small puis-padding-right-small"]//*[@class="a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal"])['+i+']';
       const productLocator: Locator = page.locator(productXPath);
       const priceLocator: Locator = page.locator(priceXPath);
+      const linkLocator: Locator = page.locator(linkXPath);
       const titler: string = await productLocator.innerText();
       const price: string = await priceLocator.innerText();
-      console.log(titler+" "+price);
+      const link: string = await linkLocator.getAttribute('href') || '';
+      console.log(titler+" "+price+" "+link);
     }
 
     await browser.close();
