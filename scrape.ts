@@ -25,15 +25,9 @@ async function scrapeData(searchItem): Promise<void> {
     let Xpaths = [
       {
         id: 1,
-        product: '//*[@data-component-type="s-search-result"]//*[@class="a-section a-spacing-small puis-padding-left-small puis-padding-right-small"]//*[@class="a-size-base-plus a-color-base a-text-normal"]',
-        price:'//*[@data-component-type="s-search-result"]//*[@class="a-section a-spacing-none a-spacing-top-small s-price-instructions-style"]//*[@class="a-offscreen"]',
-        link: '//*[@data-component-type="s-search-result"]//*[@class="a-section a-spacing-small puis-padding-left-small puis-padding-right-small"]//*[@class="a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal"]'
-      },
-      {
-        id: 2,
-        product: '//*[@data-component-type="s-search-result"]//*[@class="a-section a-spacing-small puis-padding-left-small puis-padding-right-small"]//*[@class="a-size-base-plus a-color-base a-text-normal"]',
-        price:'//*[@data-component-type="s-search-result"]//*[@class="a-section a-spacing-none a-spacing-top-small s-price-instructions-style"]//*[@class="a-offscreen"]',
-        link: '//*[@data-component-type="s-search-result"]//*[@class="a-section a-spacing-small puis-padding-left-small puis-padding-right-small"]//*[@class="a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal"]'
+        product: '//*[@class="a-size-base-plus a-color-base a-text-normal"]',
+        price:'//*[@class="a-offscreen"]',
+        link: '//*[@class="a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal"]'
       }
     ]
 
@@ -42,8 +36,8 @@ async function scrapeData(searchItem): Promise<void> {
     for(let i = 1 ; i <= 3;i++){
       try{
         let productXPath = `(${Xpaths[XpathID].product})[${i}]`;
-        let priceXPath = '(//*[@data-component-type="s-search-result"]//*[@class="a-section a-spacing-none a-spacing-top-small s-price-instructions-style"]//*[@class="a-offscreen"])['+i+']';
-        let linkXPath = '(//*[@data-component-type="s-search-result"]//*[@class="a-section a-spacing-small puis-padding-left-small puis-padding-right-small"]//*[@class="a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal"])['+i+']';
+        let priceXPath = `(${Xpaths[XpathID].price})[${i}]`;
+        let linkXPath = `(${Xpaths[XpathID].link})[${i}]`;
         const productLocator: Locator = page.locator(productXPath);
         const priceLocator: Locator = page.locator(priceXPath);
         const linkLocator: Locator = page.locator(linkXPath);
@@ -62,29 +56,40 @@ async function scrapeData(searchItem): Promise<void> {
         records.push(productItem)
       }
       catch(error){
-        console.log(error);
+        XpathID++;
+        i = 0;
+        records = [];
+        if(XpathID === Xpaths.length){
+          console.log('Please check XPATHs');
+          break;
+        }
+        console.log('Trying Next XPath: '+ XpathID);
       }
     }
-
-  const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-  const csvWriter = createCsvWriter({
-      path: 'file.csv',
-      header: [
-          {id: 'product', title: 'Product'},
-          {id: 'price', title: 'Price'},
-          {id: 'searchItem', title: 'Search Item'},
-          {id: 'link', title: 'Link'}
-      ]
-  });
-    
-  csvWriter.writeRecords(records)       // returns a promise
-      .then(() => {
-          console.log('CSV locally saved...');
-      });
-
-    await browser.close();
+  if(records.length > 0) {
+    const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+    const csvWriter = createCsvWriter({
+        path: 'file.csv',
+        header: [
+            {id: 'product', title: 'Product'},
+            {id: 'price', title: 'Price'},
+            {id: 'searchItem', title: 'Search Item'},
+            {id: 'link', title: 'Link'}
+        ]
+    });
+      
+    csvWriter.writeRecords(records)       // returns a promise
+        .then(() => {
+            console.log('CSV locally saved...');
+        });
+  }
+  else{
+    console.log('No records found');
   }
 
-  scrapeData('Mysore Sandal').catch((err) => console.error(err));
+  await browser.close();
+}
+
+scrapeData('nike shoes').catch((err) => console.error(err));
 
   
