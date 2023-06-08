@@ -1,0 +1,21 @@
+{
+  "name": "automation-takehome-project",
+  "version": "1.0.0",
+  "description": "Project for candidates to complete as a hiring assessment.",
+  "scripts": {
+    "build": "tsc src/*.ts --outDir ./dist",
+    "generateCSV": "node dist/src/index.js"
+  },
+  "files": ["./src/*.ts","./helpers/*.ts"],
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "csv-writer": "^1.6.0",
+    "playwright": "^1.34.3",
+    "typescript": "^5.1.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.34.3"
+  }
+}

@@ -23,3 +23,18 @@ The objective is to build an automation application, meaning a program that perf
 ### Extra Credit
 
 1. Introduce a set of tests around the project
+
+### How to run the application
+
+1. Make sure the inputs are provided under src/input.ts file
+WEBSITE = 'amazon';
+SEARCHTERM = 'Nike';
+NUMBER_OF_ITEMS = 3;
+
+2. Install dependencies using **npm install**
+
+3. Then run command **npm run build** to generate build files under dist folder
+
+4. Once built, then run command **npm run generateCSV** to run the application
+
+5. Once the command run successfully, the CSV file will be generated in download folder *For eg. Amazon_2023-06-08T20:02:26.650Z.csv*
