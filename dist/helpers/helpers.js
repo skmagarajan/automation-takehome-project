@@ -14,9 +14,9 @@ exports.helper = {
         scrapePaths: [
             {
                 id: 1,
-                product: '//*[@class="a-size-base-plus a-color-base a-text-normal"]',
-                price: '//*[@class="a-offscreen"]',
-                link: '//*[@class="a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal"]'
+                product: '//*[@data-component-type="s-search-result"]//*[@class="a-size-base-plus a-color-base a-text-normal"]',
+                price: '//*[@data-component-type="s-search-result"]//*[@class="a-offscreen"]',
+                link: '//*[@data-component-type="s-search-result"]//*[@class="a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal"]'
             },
             // For multiple XPaths setup
         ]
