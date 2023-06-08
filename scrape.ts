@@ -1,43 +1,37 @@
 import { chromium, Browser, Page, Locator, ElementHandle } from 'playwright';
+import { helper, website } from './helpers/helpers';
 
-async function scrapeData(searchItem, URL): Promise<void> {
+async function scrapeData(searchItem: string, website: number): Promise<void> {
     const browser: Browser = await chromium.launch({
       headless: false // setting this to true will not run the UI
-  });
+    });
     const page: Page = await browser.newPage();
 
-    await page.goto(URL);
+    await page.goto(helper[website].url);
     await page.waitForTimeout(1000); // wait for 5 seconds
 
     // Extract data from the webpage
     const title: string = await page.title();
     console.log('Page title:', title);
 
-    await page.getByRole('textbox').fill(searchItem);
-    await page.click('input[value="Go"]');
+    await page.locator(helper[website].selectors.searchInput).fill(searchItem);
+    await page.locator(helper[website].selectors.searchIcon).click();
     await page.waitForTimeout(5000);
 
-    await  page.selectOption('#s-result-sort-select','Price: Low to High')
+    //Sort Item
+    await page.locator(helper[website].selectors.sortDropdownButton).click();
+    await page.locator(helper[website].selectors.selectSortItem).click();
     await page.waitForTimeout(5000);
 
     var records: any = [];
-
-    let Xpaths = [
-      {
-        id: 1,
-        product: '//*[@class="a-size-base-plus a-color-base a-text-normal"]',
-        price:'//*[@class="a-offscreen"]',
-        link: '//*[@class="a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal"]'
-      }
-    ]
 
     let XpathID = 0;
 
     for(let i = 1 ; i <= 3;i++){
       try{
-        let productXPath = `(${Xpaths[XpathID].product})[${i}]`;
-        let priceXPath = `(${Xpaths[XpathID].price})[${i}]`;
-        let linkXPath = `(${Xpaths[XpathID].link})[${i}]`;
+        let productXPath = `(${helper[website].scrapePaths[XpathID].product})[${i}]`;
+        let priceXPath = `(${helper[website].scrapePaths[XpathID].price})[${i}]`;
+        let linkXPath = `(${helper[website].scrapePaths[XpathID].link})[${i}]`;
         const productLocator: Locator = page.locator(productXPath);
         const priceLocator: Locator = page.locator(priceXPath);
         const linkLocator: Locator = page.locator(linkXPath);
@@ -45,7 +39,7 @@ async function scrapeData(searchItem, URL): Promise<void> {
         const price: string = await priceLocator.innerText();
         let link: string = await linkLocator.getAttribute('href') || '';
         if(link.startsWith('/')){
-          link = `${URL}${link}`
+          link = `${helper[website].url}${link}`
         }
         console.log(product+" "+price+" "+link);
   
@@ -62,7 +56,7 @@ async function scrapeData(searchItem, URL): Promise<void> {
         XpathID++;
         i = 0;
         records = [];
-        if(XpathID === Xpaths.length){
+        if(XpathID === helper[website].scrapePaths.length){
           console.log('Please check XPATHs');
           break;
         }
@@ -93,6 +87,6 @@ async function scrapeData(searchItem, URL): Promise<void> {
   await browser.close();
 }
 
-scrapeData('nike shoes', 'https://amazon.com').catch((err) => console.error(err));
+scrapeData('nike shoes', website.amazon).catch((err) => console.error(err));
 
   
